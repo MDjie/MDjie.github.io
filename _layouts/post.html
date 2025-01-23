@@ -3,8 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ page.title }}</title>
+    <style>
+        /* 添加样式以使侧边栏和内容并排显示 */
+        .container {
+            display: flex;
+        }
+        .sidebar {
+            width: 200px; /* 侧边栏宽度 */
+            padding: 10px;
+            background-color: #f4f4f4; /* 侧边栏背景颜色 */
+        }
+        .content {
+            flex: 1; /* 内容区域占据剩余空间 */
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
-{{ content }}
+<div class="container">
+    <div class="sidebar">
+        <h2>文章目录</h2>
+        <ul>
+            <li><a href="#section1">第一部分</a></li>
+            <li><a href="#section2">第二部分</a></li>
+            <li><a href="#section3">第三部分</a></li>
+            <!-- 添加更多目录项 -->
+        </ul>
+    </div>
+    <div class="content">
+        {{ content }}
+    </div>
+</div>
 </body>
 </html>
