@@ -1,0 +1,301 @@
+---
+layout: post
+title: "Learning records for VUE3"
+date: 2025-04-03 11:09:10 +0800
+category: jekyll update
+---
+# VUE3
+## basic grammar
+VUE中最基础的就是vue指令，指令时一种以v-开头的特殊表达式，除了***v-on,v-slot,v-for***外，所有指令都期望一个表达式作为输入。一个指令的任务就是在输入改变时，在***dom文档中进行更新***
+。指令的结构为
+![表达式结构](../assets/VUE3-struction-architecture.png)
+### 文字插值与html插入
+`{{virable}}`could dynamically insert the content of variable into the page.`v-html="virable"`could parse variable as a html element and show it in the page.
+### 属性绑定
+`<div v-bind:id="dynamicId"></div>`will bind a dynamic value to the div's id attribute. it's shorthand syntax is `<div :id="dynamicId"></div>`. if the variable's name is same as the attribute, then the syntax could
+be more easier:`<div :id></div>`,same as :id="id".This feature is supported only in 3,4+.
+所有的数据绑定中都支持完整的 JavaScript 表达式，也可以在绑定的表达式中使用一个组件暴露的方法如：
+```
+<time :title="toTitleDate(date)" :datetime="date">
+  {{ formatDate(date) }}
+</time>
+```
+表达式中仅能使用有限的全局对象列表，该列表中会暴露常用的内置全局对象，比如 Math 和 Date。没有显式包含在列表中的全局对象将不能在模板内表达式中访问，例如用户附加在 window 上的属性。
+
+### 动态参数
+`<a :[attributeName]="url"> ... </a>` 这里的 attributeName 会作为一个 JavaScript 表达式被动态执行，计算得到的值会被用作最终的参数。举例来说，如果你的组件实例有一个数据属性 attributeName，其值为 "href"，那么这个绑定就等价于 v-bind:href。
+动态参数中表达式的值应当是一个***字符串，或者是 null***。特殊值 null 意为***显式移除该绑定***。其他非字符串的值会触发警告。
+
+### 修饰符Modifiers
+用来表明指令的特殊执行方式。
+
+### 响应式基础
+#### 用ref函数声明一个响应式变量
+ref() 接收参数，并将其包裹在一个带有 .value 属性的 ref 对象中返回：
+```aiexclude
+const count = ref(0)
+
+console.log(count) // { value: 0 }
+console.log(count.value) // 0
+```
+在组件中使用：
+```aiexclude
+<script>
+import { ref } from 'vue'
+
+export default {
+  // `setup` 是一个特殊的钩子，专门用于组合式 API。
+  setup() {
+    const count = ref(0)
+
+    // 将 ref 暴露给模板
+    return {
+      count
+    }
+  }
+}
+</script>
+
+<template>
+<div>{{ count }}</div>
+</template>
+```
+
+在组件中使用响应式变量时，不用加`.value`。可以直接在事件监听器中改变一个ref的值。
+```aiexclude
+<button @click="count++">
+  {{ count }}
+</button>
+```
+#### 用reactive来创建一个响应式变量
+```aiexclude
+
+import { reactive } from 'vue'
+
+const state = reactive({ count: 0 })
+```
+reactive() 将使对象本身具有响应性。
+
+| 特性            | ref             |reactive|
+|---------------|-----------------|---|
+| 数据类型          | 	只接受对象/数组       |	接受任何类型的值|
+| 访问方式	         | 直接访问属性	         | 需要通过 .value 访问 |
+| 模板中使用         | 	直接使用           |	自动解包(无需 .value)|
+| 重新赋值	         | 不能整个替换(会失去响应性)	 | 可以整个替换(保持响应性) |
+| 解构/展开	        | 会失去响应性          |	保持响应性|
+| TypeScript支持	 | 类型推断更自然         | 	需要泛型参数         |
+
+#### 声明方法
+用function关键词在`set up`声明一个方法,并暴露给模板以使用。
+```aiexclude
+import { ref } from 'vue'
+
+export default {
+  setup() {
+    const count = ref(0)
+
+    function increment() {
+      // 在 JavaScript 中需要 .value
+      count.value++
+    }
+
+    // 不要忘记同时暴露 increment 函数
+    return {
+      count,
+      increment
+    }
+  }
+}
+```
+当有很多变量与方法需要暴露时，可以使用`<script setup>...<script>`来自动暴露给模板。如：
+```aiexclude
+<script setup>
+import { ref } from 'vue'
+
+const count = ref(0)
+
+function increment() {
+  count.value++
+}
+</script>
+
+<template>
+  <button @click="increment">
+    {{ count }}
+  </button>
+</template>
+```
+VUE的响应具有***深层次***的特性，即嵌套类型的深层被修改时，对应的模板也能动态地得到响应。
+### ref的使用注意事项
+- ref 作为响应式数组或原生集合类型 (如 Map) 中的元素被访问时，它不会被解包
+```aiexclude
+const books = reactive([ref('Vue 3 Guide')])
+// 这里需要 .value
+console.log(books[0].value)
+
+const map = reactive(new Map([['count', ref(0)]]))
+// 这里需要 .value
+console.log(map.get('count').value)
+```
+- 在模板渲染上下文中，只有顶级的 ref 属性才会被解包。
+
+在下面的例子中，count 和 object 是顶级属性，但 object.id 不是
+```aiexclude
+const count = ref(0)
+const object = { id: ref(1) }
+```
+因此，这个表达式按预期工作：
+```aiexclude
+{{ count + 1 }}
+```
+...但这个不会：
+```aiexclude
+{{ object.id + 1 }}
+```
+- 如果 ref 是文本插值的最终计算值 (即 {{ }} 标签)，那么它将被解包。
+```aiexclude
+{{ object.id }}
+```
+以上非顶层属性也能正常工作。
+### 计算属性
+顾名思义，计算属性就是通过计算得到的一个属性。对于简单的计算，我们可以直接通过表达式的方式来获得：`<span>{{ author.books.length > 0 ? 'Yes' : 'No' }}</span>`
+这样做对于一次性的计算，确实很方便。但是如果模板中有多个地方需要用到同样的计算后的结果，继续使用表达式的方式，就不得不在每个需要的地方写一次表达式。
+对于这种情况。可以使用计算属性来代替：
+```aiexclude
+const publishedBooksMessage = computed(() => {
+  return author.books.length > 0 ? 'Yes' : 'No'
+})
+
+<template>
+  <p>Has published books:</p>
+  <span>{{ publishedBooksMessage }}</span>
+</template>
+```
+至此，其实也可以通过一个方法来达到相应的效果：
+```aiexclude
+fucntion comput(){
+return author.books.length>0?'Yes':'No'
+}
+```
+方法与计算属性有一重要区别：计算属性是***有缓存的***。方法的触发方式为调用，计算属性的触发方式为值的更新，且计算属性能基于响应式依赖被缓存。所以只要books不变，无论多少次访问publishedBooksMessage ，都会立即返回缓存的值。
+计算属性还是可写的，这点不常用到，便不过多介绍了。
+***getter中还可以获取到上一次的值***。
+### 类与样式的绑定
+#### 类的绑定
+`<div :class={active:isActive}><div>`传入一个对象来动态渲染类名，当isActive为true时，active才被加入class的值中。可以扩展到多个对象属性，在对象中使用计算属性
+```aiexclude
+const isActive = ref(true)
+const error = ref(null)
+
+const classObject = computed(() => ({
+  active: isActive.value && !error.value,
+  'text-danger': error.value && error.value.type === 'fatal'
+}))
+
+<div :class="classObject"></div>
+```
+#### 样式的绑定
+```aiexclude
+const styleObject = reactive({
+  color: 'red',
+  fontSize: '30px'
+})
+
+<div :style="styleObject"></div>
+```
+同样的，如果样式对象需要更复杂的逻辑，也可以使用返回样式对象的计算属性。
+
+### 条件，列表渲染
+条件渲染
+```aiexclude
+<h1 v-if="bool1&&bool2">Vue is awesome!</h1>
+<h1 v-else-if=bool1&&!bool2>Oh no 😢</h1>
+<h1 v-else>last one</h1>
+```
+条件渲染也可以用在template上。v-show与v-if差不多，但是不可用在template上，其会修该display属性值。
+
+列表渲染
+
+数组渲染列表
+```aiexclude
+const items = ref([{ message: 'Foo' }, { message: 'Bar' }])
+
+<li v-for="item in items">
+  {{ item.message }}
+</li>
+
+```
+在 v-for 块中可以完整地访问***父作用域内的属性和变量***。v-for 也支持使用可选的第二个参数表示当前项的***位置索引***。
+
+对象列表渲染
+```aiexclude
+const myObject = reactive({
+  title: 'How to do lists in Vue',
+  author: 'Jane Doe',
+  publishedAt: '2016-04-10'
+})
+
+<template>
+<ul>
+<li v-for="value in mobject")>
+{{value}}
+</li>
+</ul>
+//通过第二个参数引入key
+<ul>
+<li v-for="(value,key) in mobject")>
+{{value}}.{{key}}
+</li>
+</ul>
+</template>
+//同理，第三个参数引入index
+```
+范围值进行列表渲染
+```aiexclude
+<span v-for="n in 10">{{ n }}</span>
+```
+v-for VS v-if
+
+它们同时存在于一个节点上时，v-if 比 v-for 的优先级更高。这意味着 v-if 的条件将无法访问到 v-for 作用域内定义的变量别名。
+```aiexclude
+<!--
+ 这会抛出一个错误，因为属性 todo 此时
+ 没有在该实例上定义
+-->
+<li v-for="todo in todos" v-if="!todo.isComplete">
+  {{ todo.name }}
+</li>
+```
+解决方法：在外先包装一层`<template>`再在其上使用`v-for`可以解决这个问题 (这也更加明显易读)
+
+```aiexclude
+<template v-for="todo in todos">
+  <li v-if="!todo.isComplete">
+    {{ todo.name }}
+  </li>
+</template>
+```
+根据数组状态渲染：
+```aiexclude
+<div v-for="item in items" :key="item.id">
+  <!-- 内容 -->
+</div>
+```
+key 绑定的值期望是一个基础类型的值，例如字符串或 number 类型。不要用对象作为 v-for 的 key。
+### 事件处理
+`v-on:click.prevent="count++"`可以简单编写一个点击响应逻辑。但响应逻辑复杂时，需要构造方法来处理
+```aiexclude
+const name = ref('Vue.js')
+
+function greet(event) {
+  alert(`Hello ${name.value}!`)
+  // `event` 是 DOM 原生事件
+  if (event) {
+    alert(event.target.tagName)
+  }
+}
+
+<!-- `greet` 是上面定义过的方法名 -->
+<button @click="greet">Greet</button>
+```
+方法事件处理器会自动接收原生 DOM 事件并触发执行。在上面的例子中，我们能够通过被触发事件的 event.target 访问到该 DOM 元素。
