@@ -85,10 +85,15 @@ public class MusicTheoryTrainer {
     }
 
     // 支持限时输入
-    private String timedInput(Scanner scanner, int seconds) {
+    private String timedInput(int seconds) {
         final String[] result = new String[1];
         Thread inputThread = new Thread(() -> {
-            result[0] = scanner.nextLine();
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                result[0] = reader.readLine();
+            } catch (IOException e) {
+                // ignore
+            }
         });
         inputThread.start();
         try {
@@ -106,11 +111,37 @@ public class MusicTheoryTrainer {
     public void intervalMemoryPractice() {
         Scanner scanner = new Scanner(System.in);
         loadStats();
+        // 让用户选择要训练的度数
+        Set<Integer> selectedIntervals = new HashSet<>();
+        while (selectedIntervals.isEmpty()) {
+            System.out.println("请输入要训练的度数（如3,4,5或3-5，多个用逗号分隔，支持范围）：");
+            String intervalInput = scanner.nextLine().trim();
+            String[] parts = intervalInput.split(",");
+            for (String part : parts) {
+                part = part.trim();
+                if (part.matches("\\d+")) {
+                    int val = Integer.parseInt(part);
+                    if (val >= 3 && val <= 7) selectedIntervals.add(val);
+                } else if (part.matches("\\d+-\\d+")) {
+                    String[] range = part.split("-");
+                    int start = Integer.parseInt(range[0]);
+                    int end = Integer.parseInt(range[1]);
+                    if (start > end) { int tmp = start; start = end; end = tmp; }
+                    for (int i = start; i <= end; i++) {
+                        if (i >= 3 && i <= 7) selectedIntervals.add(i);
+                    }
+                }
+            }
+            if (selectedIntervals.isEmpty()) {
+                System.out.println("输入无效，请重新输入。");
+            }
+        }
         // 生成所有基础组合
         List<IntervalQuestion> baseQuestions = new ArrayList<>();
         for (int startDegree = 1; startDegree <= 7; startDegree++) {
             for (boolean isAscending : new boolean[]{true, false}) {
                 for (int interval = 3; interval <= 7; interval++) {
+                    if (!selectedIntervals.contains(interval)) continue;
                     baseQuestions.add(new IntervalQuestion(startDegree, isAscending, interval));
                 }
             }
@@ -173,7 +204,16 @@ public class MusicTheoryTrainer {
             // 排序或乱序
             if (mode == 1) {
                 // 顺序：三度-四度-五度-六度-七度
-                questions.sort(Comparator.comparingInt(q -> q.interval));
+                Map<Integer, List<IntervalQuestion>> intervalMap = new HashMap<>();
+                for (IntervalQuestion q : questions) {
+                    intervalMap.computeIfAbsent(q.interval, k -> new ArrayList<>()).add(q);
+                }
+                questions.clear();
+                for (int interval = 3; interval <= 7; interval++) {
+                    List<IntervalQuestion> group = intervalMap.getOrDefault(interval, new ArrayList<>());
+                    Collections.shuffle(group); // 每组内部打乱
+                    questions.addAll(group);
+                }
             } else {
                 Collections.shuffle(questions);
             }
@@ -199,7 +239,7 @@ public class MusicTheoryTrainer {
                 String userInput;
                 if (useTimer) {
                     System.out.printf("（限时%d秒）", timeLimit);
-                    userInput = timedInput(scanner, timeLimit);
+                    userInput = timedInput(timeLimit);
                 } else {
                     userInput = scanner.nextLine();
                 }
@@ -208,6 +248,8 @@ public class MusicTheoryTrainer {
                 boolean wrong = false;
                 if (useTimer && userInput == null) {
                     System.out.println("超时，正确答案是：" + correctAnswer + "\n");
+                    // 清理输入缓冲区，防止残留换行符
+                    if (scanner.hasNextLine()) scanner.nextLine();
                     wrong = true;
                 } else if (!correctAnswer.equals(userInput != null ? userInput.trim() : "")) {
                     System.out.println("回答错误。正确答案是：" + correctAnswer + "\n");
