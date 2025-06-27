@@ -49,9 +49,9 @@ categories: jekyll update
             no.3 Song:彩虹
             no.4 Song:稻香
             no.6 Song:全世界失眠
-            no.8 Song:
-            no.9 Song:
-            no.10 Song:
+            no.8 Song:someone like you
+            no.9 Song:平凡之路
+            no.10 Song:you belong to me
             The time arrangement is also adoptive while I make some little change:
             19:00~21:00: practicing guitar and singing.
             21:00~22:30: relaxing........
@@ -64,7 +64,21 @@ categories: jekyll update
             if(get work to do):  handle the work task
             else(if need to coroperate with zou in NLP): learn and follow him
             else: study hacker's handy book and practice.
-            
+    2025-06-25 15:07:35 +0800
+    after about a month of study, I nearly finished the tasks about the paper project, I write a website for human annotation, even only three people are using so far.
+    And I plan to quit in next week, about twenty days earlier than the schedule I made before. My room mates have found their new domitory, so for their sake, it's perfect to 
+    terminate the contract. While, I don't mad at that, cause I just can't wait to leave this prision early. 
+    Even just think about the scene when I step out of that glassic door and would never back again make me excited! This work is a tortue, I sell my time for tuition and deposite. Although the meagar salary 
+    could never afford the cost of my monther's theropy and my grandmother's hearing-aid.But I have no ther channels to make a big money for that.
+    Even that, I think it;s worthwhile for me to pay for some booze for drunk amd commemorating.
+
+    As for my schedule, I think I am stick to my music dream while concerning about it's boundless.It's not difficult for me to play ten songs well if I just continue to 
+    practice them every day. But that make me feels like picking ten heavy stones in my pocket. Making me feel bad. I wish What I am doing is right. Now I am doing a music theory train: a train to obtain the ability to identifying the interval between two notes 
+    a fret train to find a specific position's note and a note's all positons on fret board in C Major tone. And a exercise to familarize myself to the different tonic shape and the corresponding scale shape.
+    
+    Why I decide to do this? Actually, My objective on music can be divided into three different level, first level, learn ten my favorate songs(I mean sing while playing) second level: impromptu accopaniment. third and the most high level: could create my own songs.
+    Now I am suited in the process between the first and second level. I know If I want further improvement, I have to known more about music, about guitar. specificly, I should be able to perform smoothly on guitar in different key at least in a Major scale, then go to arpeggio, chord
+    Then I have to train my ear to find the key, chords progression. Finally, I could reach the second level.   
         
 
 

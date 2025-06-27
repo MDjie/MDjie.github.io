@@ -16,3 +16,24 @@
 
 ***Cluster_bomb***支持多个参数，多组值，穷举出每个参数位置的值域的所有组合。攻击次数：n1*n2*n3.....
 
+## Target situation 
+
+### Password-Based Authentication
+
+#### Normal Step
+##### login&regist scan
+find the login and register page, investigate their response patterns
+##### Username enumeration
+- By obvious signal like state code, response length, specific response message
+- By subtle signal, specifically response time.
+##### Password enumeration
+According to the candidate username, brute-forth attack the password.
+#### possible anti-brute-forth protection
+##### ip lock
+- trying to spoof the relevant options in request header,like: X-Forwarded-For,X-Real-Ip
+- add the valid account and password into the playloads
+##### account lock
+
+##### restricted rate
+
+##### human detection mechanism
