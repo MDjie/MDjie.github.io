@@ -336,4 +336,398 @@ flattened = [num for row in matrix for num in row]
 ## Pandas
 ### 基本数据结构
 - Series
+是一种一个数据结构类似于数组。
+```python
+s=pd.Series([1,2,3,4,5])
+print(s)
+s=pd.Series([1,2,3,4,5],index=['a','b','c','d','e'])
+print(s)
+print(s['a'])
+print(s[0])
+print(s[1:3])
+print(s[['a','b','c']])
 
+#获取值数组
+print(type(s))
+a=s.values
+print(type(a))
+
+#获取索引
+i=s.index
+print(type(i))
+print(i)
+#####################################output
+0    1
+1    2
+2    3
+3    4
+4    5
+dtype: int64
+a    1
+b    2
+c    3
+d    4
+e    5
+dtype: int64
+1
+1
+b    2
+c    3
+dtype: int64
+a    1
+b    2
+c    3
+dtype: int64
+<class 'pandas.core.series.Series'>
+<class 'numpy.ndarray'>
+<class 'pandas.core.indexes.base.Index'>
+Index(['a', 'b', 'c', 'd', 'e'], dtype='object')
+```
+- DataFrame(二维数组)
+类似于sql表，excel表。
+```python
+
+
+data = {'name': ['Alice', 'Bob', 'Charlie'],
+        'age': [25, 30, 35],
+        'city': ['NY', 'LA', 'Chicago']}
+df = pd.DataFrame(data)
+print('excel形式全部显示')
+print(df)
+print('按列索引')
+print(df['name'])
+print(df[['name','age']])
+print('按行索引')
+print(df.loc[0])#按行索引
+print(df.loc[0:1])#按行索引
+print('按行,列索引')
+print(df.loc[0:1,'name'])#按行索引和列索引
+print(df.loc[0:1,['name','age']])#按行索引和列索引
+print('按行号索引')
+print(df.iloc[0])#按行号索引
+print(df.iloc[0:1])#按行号索引
+
+################output
+excel形式全部显示
+      name  age     city
+0    Alice   25       NY
+1      Bob   30       LA
+2  Charlie   35  Chicago
+按列索引
+0      Alice
+1        Bob
+2    Charlie
+Name: name, dtype: object
+      name  age
+0    Alice   25
+1      Bob   30
+2  Charlie   35
+按行索引
+name    Alice
+age        25
+city       NY
+Name: 0, dtype: object
+    name  age city
+0  Alice   25   NY
+1    Bob   30   LA
+按行,列索引
+0    Alice
+1      Bob
+Name: name, dtype: object
+    name  age
+0  Alice   25
+1    Bob   30
+按行号索引
+name    Alice
+age        25
+city       NY
+Name: 0, dtype: object
+    name  age city
+0  Alice   25   NY
+```
+### 数据查看
+```python
+
+##数据查看
+print("查看前几行")
+print(s.head(2))#查看前几行
+print(df.head(2))#查看前几行
+print("查看后几行")
+print(s.tail(2))#查看后几行
+print(df.tail(2))#查看后几行
+print("查看数据信息")
+print(s.info())#查看数据信息
+print(df.info())#查看数据信息
+print("查看数据统计信息")
+print(s.describe())#查看数据统计信息
+print(df.describe())#查看数据统计信息
+print("查看数据类型")
+print(s.dtypes)#查看数据类型
+print(df.dtypes)#查看数据类型
+print("查看数据形状")
+print(s.shape)#查看数据形状
+print(df.shape)#查看数据形状
+#######################output
+查看前几行
+a    1
+b    2
+dtype: int64
+    name  age city
+0  Alice   25   NY
+1    Bob   30   LA
+查看后几行
+d    4
+e    5
+dtype: int64
+      name  age     city
+1      Bob   30       LA
+2  Charlie   35  Chicago
+查看数据信息
+<class 'pandas.core.series.Series'>
+Index: 5 entries, a to e
+Series name: None
+Non-Null Count  Dtype
+--------------  -----
+5 non-null      int64
+dtypes: int64(1)
+memory usage: 80.0+ bytes
+None
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 3 entries, 0 to 2
+Data columns (total 3 columns):
+ #   Column  Non-Null Count  Dtype 
+---  ------  --------------  ----- 
+ 0   name    3 non-null      object
+ 1   age     3 non-null      int64 
+ 2   city    3 non-null      object
+dtypes: int64(1), object(2)
+memory usage: 200.0+ bytes
+None
+查看数据统计信息
+count    5.000000
+mean     3.000000
+std      1.581139
+min      1.000000
+25%      2.000000
+50%      3.000000
+75%      4.000000
+max      5.000000
+dtype: float64
+        age
+count   3.0
+mean   30.0
+std     5.0
+min    25.0
+25%    27.5
+50%    30.0
+75%    32.5
+max    35.0
+查看数据类型
+int64
+name    object
+age      int64
+city    object
+dtype: object
+查看数据形状
+(5,)
+(3, 3)
+```
+### 数据选择
+```python
+
+##数据筛选
+print("按列筛选")#Series无法按列筛选
+print(df['name'])
+print("按行筛选")
+print(df.loc[0])
+print("按行号筛选")
+print(s.iloc[0:2])#按行号筛选
+print(df.iloc[0])#按行号筛选
+print("按条件筛选")
+print(df[df['age'] > 25])#按条件筛选
+
+#####################
+按列筛选
+0      Alice
+1        Bob
+2    Charlie
+Name: name, dtype: object
+按行筛选
+name    Alice
+age        25
+city       NY
+Name: 0, dtype: object
+按行号筛选
+a    1
+b    2
+dtype: int64
+name    Alice
+age        25
+city       NY
+Name: 0, dtype: object
+按条件筛选
+      name  age     city
+1      Bob   30       LA
+2  Charlie   35  Chicago
+```
+### 数据操作
+```python
+#数据操作
+print("增加删除列")
+df['salary']=[10000,20000,30000]
+print(df)
+df.drop('salary',axis=1,inplace=True)
+print(df)
+print("增加删除行")
+df.loc[3] = ['Tom', 25, 10000]
+print(df)
+df.drop(3,axis=0,inplace=True)
+print(df)
+################################output
+增加删除列
+      name  age     city  salary
+0    Alice   25       NY   10000
+1      Bob   30       LA   20000
+2  Charlie   35  Chicago   30000
+      name  age     city
+0    Alice   25       NY
+1      Bob   30       LA
+2  Charlie   35  Chicago
+增加删除行
+      name  age     city
+0    Alice   25       NY
+1      Bob   30       LA
+2  Charlie   35  Chicago
+3      Tom   25    10000
+      name  age     city
+0    Alice   25       NY
+1      Bob   30       LA
+2  Charlie   35  Chicago
+按列排序
+      name  age     city
+2  Charlie   35  Chicago
+1      Bob   30       LA
+0    Alice   25       NY
+按行排序
+      name  age     city
+0    Alice   25       NY
+1      Bob   30       LA
+2  Charlie   35  Chicago
+缺失值处理
+      name  age     city
+0    Alice   25       NY
+1      Bob   30       LA
+2  Charlie   35  Chicago
+      name  age     city
+0    Alice   25       NY
+1      Bob   30       LA
+2  Charlie   35  Chicago
+Pandas.py:104: FutureWarning: The default value of numeric_only in DataFrame.mean is deprecated. In a future version, it will default to False. In addition, specifying 'numeric_only=None' is deprecated. Select only valid columns or specify the value of numeric_only to silence this warning.
+  print(df.fillna(df.mean()))#填充缺失值
+      name  age     city
+0    Alice   25       NY
+1      Bob   30       LA
+2  Charlie   35  Chicago
+```
+### 数据分组与聚合
+```aiexclude
+
+#数据分组与聚合
+print("数据分组与聚合")
+grouped=df.groupby('age')
+print(grouped.mean())#分组后的平均值
+print(grouped.sum())#分组后的总和
+print(grouped.max())#分组后的最大值
+print(grouped.min())#分组后的最小值
+print(grouped.count())#分组后的数量
+#多函数聚合
+print("多函数聚合")
+df['salary']=[10000,20000,30000]
+print(df.groupby('city').agg({'age': ['mean', 'min', 'max'], 
+                       'salary': 'sum'}))
+##################################output
+数据分组与聚合
+Pandas.py:108: FutureWarning: The default value of numeric_only in DataFrameGroupBy.mean is deprecated. In a future version, numeric_only will default to False. Either specify numeric_only or select only columns which should be valid for the function.
+  print(grouped.mean())#分组后的平均值
+Empty DataFrame
+Columns: []
+Index: [25, 30, 35]
+        name     city
+age                  
+25     Alice       NY
+30       Bob       LA
+35   Charlie  Chicago
+        name     city
+age                  
+25     Alice       NY
+30       Bob       LA
+35   Charlie  Chicago
+        name     city
+age                  
+25     Alice       NY
+30       Bob       LA
+35   Charlie  Chicago
+     name  city
+age            
+25      1     1
+30      1     1
+35      1     1
+多函数聚合
+          age         salary
+         mean min max    sum
+city                        
+Chicago  35.0  35  35  30000
+LA       30.0  30  30  20000
+NY       25.0  25  25  10000
+```
+### 数据合并
+```python
+#数据合并
+print("数据合并")
+# 连接
+pd.concat([df1, df])  # 简单连接
+
+# 合并
+pd.merge(df1, df2, on='key')  # 类似SQL JOIN
+
+# 追加
+df1.append(df2, ignore_index=True)
+```
+### 输入输出
+```python
+# 读取数据
+df = pd.read_csv('data.csv')    # CSV文件
+df = pd.read_excel('data.xlsx') # Excel文件
+
+# 保存数据
+df.to_csv('output.csv', index=False)
+df.to_excel('output.xlsx')
+```
+### 与Numpy互换
+```python
+#与numpy的交互
+import numpy as np
+print("转化为numpy数组")
+print(type(s))
+s=s.to_numpy()
+print(type(s))
+df=df.to_numpy()
+print(type(df))
+arr=np.array([1,2,3])
+print(type(arr))
+s=pd.Series(arr)
+print(type(s))
+arr_2D=np.array([[1,2,3],[4,5,6]])
+print(type(arr_2D))
+df_2D=pd.DataFrame(arr_2D,columns=['a','b','c'])
+print(type(df_2D))
+######################output
+转化为numpy数组
+<class 'pandas.core.series.Series'>
+<class 'numpy.ndarray'>
+<class 'numpy.ndarray'>
+<class 'numpy.ndarray'>
+<class 'pandas.core.series.Series'>
+<class 'numpy.ndarray'>
+<class 'pandas.core.frame.DataFrame'>
+```

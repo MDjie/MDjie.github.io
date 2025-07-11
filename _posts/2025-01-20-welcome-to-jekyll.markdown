@@ -80,7 +80,10 @@ categories: jekyll update
     Now I am suited in the process between the first and second level. I know If I want further improvement, I have to known more about music, about guitar. specificly, I should be able to perform smoothly on guitar in different key at least in a Major scale, then go to arpeggio, chord
     Then I have to train my ear to find the key, chords progression. Finally, I could reach the second level.   
         
-
+    2025-07-09 09:53:14 +0800
+    I really want to escape from this prison. Now I seems have some emotion like a criminal in the cage.
+    Or, even more than them from some aspect. I'm sitting here, with nothing to do. But I have to sit! I am tired, I don't want to waste my time, I want to learn something. But I even have to spend a lot of energy to keep my eyes open
+    , how could I learn, how could I prepare for a promising future. I can't sleep, cause I am working... I am not free, my body was restricted, people superised people. nobody's wrong, there is no absolutely rightness or wrongness, just that freedom cost a lot.
 
 
 
